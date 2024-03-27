@@ -1,0 +1,71 @@
+package com.ps.controller;
+
+import com.ps.model.Cliente;
+import com.ps.service.IClienteService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.*;
+import java.util.List;
+//@RequiredArgsConstructor
+
+
+
+@RestController //Decir que esta clase es administrada o controlada por SPRING
+@RequestMapping("/clientes") //Agregar una ruta para mi clase
+public class ClienteController {
+
+    private final IClienteService iClienteService;
+
+
+
+    public ClienteController(IClienteService iClienteService) {
+        this.iClienteService = iClienteService;
+    }
+
+
+  /*  @Autowired
+    private IClienteService iClienteService;*/
+
+    //ResponseEntity nos sirven para dar respuesta a peticiones con estas... 200 404, 500
+
+
+   /* @GetMapping
+    public List<Cliente> getAllClientes(){
+        return null;
+    }*/
+   @GetMapping()
+   public ResponseEntity<List<Cliente>> getClienteByName(@RequestParam String nombre) {
+       List<Cliente> cliente = iClienteService.getClienteByName(nombre);
+       return ResponseEntity.ok(cliente);
+   }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Cliente> getClienteById(@PathVariable Long id) {
+        Cliente cliente = iClienteService.getClienteById(id);
+        return ResponseEntity.ok(cliente);
+    }
+
+    @PostMapping
+    public ResponseEntity<Cliente> createCliente(@RequestBody Cliente cliente) {
+        Cliente createdCliente = iClienteService.createCliente(cliente);
+        return new ResponseEntity<>(createdCliente, HttpStatus.CREATED);
+    }
+
+   @PutMapping
+    public ResponseEntity<Cliente> updateCliente(/*@PathVariable Long id,*/ @RequestBody Cliente cliente) {
+        //cliente.setCliente(id);
+        Cliente updatedCliente = iClienteService.updateCliente(cliente);
+        return ResponseEntity.ok(updatedCliente);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
+        iClienteService.deleteCliente(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+}
